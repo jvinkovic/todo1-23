@@ -3,10 +3,23 @@ import AddTask from './AddTask';
 import { useState } from 'react';
 import { initialTasks, showOptions } from './Util';
 import Button from 'react-bootstrap/Button';
+import { useParams, redirect } from 'react-router-dom';
 
 function App() {
+  let { showOption } = useParams();
+  //showOption = showOption?.toUpperCase() ?? showOptions.ALL;
+  if(!showOption) {
+    showOption = showOptions.ALL;
+  }else{
+    showOption = showOption.toUpperCase();
+  }
+
   const [tasks, setTasks] = useState(initialTasks);
-  const [tasksToShow, setTasksToShow] = useState(showOptions.ALL);
+  const [tasksToShow, setTasksToShow] = useState(showOption);
+
+  if(showOption !== showOptions.ALL && showOption !== showOptions.ACTIVE && showOption !== showOptions.COMPLETED){
+    return redirect('/NotFound');
+  }
 
   const handleAdd = (taskText) => {
     const taskNumbers = tasks.map(t => t.number);
@@ -62,7 +75,7 @@ function App() {
   const activeButtonStyle = {backgroundColor: 'grey', color: 'white'};
 
   return (
-    <div>
+    <div style={{margin: '20px'}} >
       <h1>My Tasks</h1>
       <p>
         <Button variant="light" style={tasksToShow === showOptions.ALL ? activeButtonStyle : {}} 
